@@ -115,4 +115,15 @@ public class ShoppingCart {
         });
         return topCustomers;
     }
+
+    public ArrayList<String> getCustomersWithOpenBaskets(){
+        ArrayList<String> openBaskets = new ArrayList<>();
+
+        for(ShoppingBasket basket: baskets){
+            if (basket.getStatus().equals(Status.OPEN.toString()) && !openBaskets.contains(basket.getEmail())){
+                openBaskets.add(basket.getEmail());
+            }
+        }
+        return openBaskets;
+    }
 }
