@@ -1,3 +1,4 @@
+import DataModel.BasketItems;
 import DataModel.ShoppingBasket;
 import com.google.gson.Gson;
 import org.json.simple.JSONArray;
@@ -6,6 +7,7 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,8 +55,31 @@ public class ShoppingCart {
         return customersList;
     }
 
-    public ArrayList<String> requiredStock(){
-        return null;
+    public List<HashMap<String, Object>> requiredStock(){
+        int quantity = 0;
+        List<HashMap<String, Object>> requiredItems = new ArrayList<>();
+        HashMap<String, Integer> products = new HashMap<>();
+        for(ShoppingBasket basket: baskets){
+            if(basket.getStatus().equals(Status.PAID.toString())){
+                for(BasketItems item: basket.getItems()){
+                    if(products.get(item.getName())==null){
+                        products.put(item.getName(), item.getQuantity());
+                    } else{
+                        quantity = products.get(item.getName());
+                        products.put(item.getName(), quantity+ item.getQuantity());
+                    }
+                }
+            }
+
+        }
+        for(String key: products.keySet()){
+            HashMap<String, Object> requiredProduct = new HashMap<>();
+            requiredProduct.put("quantity", products.get(key));
+            requiredProduct.put("name", key);
+            requiredItems.add(requiredProduct);
+        }
+
+        return requiredItems;
     }
 
 }
