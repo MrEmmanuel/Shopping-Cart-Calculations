@@ -66,7 +66,7 @@ public class ShoppingCart {
                         products.put(item.getName(), item.getQuantity());
                     } else{
                         quantity = products.get(item.getName());
-                        products.put(item.getName(), quantity+ item.getQuantity());
+                        products.put(item.getName(), quantity+item.getQuantity());
                     }
                 }
             }
@@ -74,12 +74,27 @@ public class ShoppingCart {
         }
         for(String key: products.keySet()){
             HashMap<String, Object> requiredProduct = new HashMap<>();
-            requiredProduct.put("quantity", products.get(key));
             requiredProduct.put("name", key);
+            requiredProduct.put("quantity", products.get(key));
             requiredItems.add(requiredProduct);
         }
 
         return requiredItems;
     }
 
+    public int totalSpent(String email){
+        List<ShoppingBasket>  customerBaskets = getCustomerBaskets(email);
+        int total = 0, quantity, price;
+        for(ShoppingBasket basket: customerBaskets){
+            BasketItems[] items = basket.getItems();
+            if((basket.getStatus().equals(Status.DELIVERED.toString())) || (basket.getStatus().equals(Status.PAID.toString()))){
+                for(BasketItems item: items){
+                    price = item.getPrice();
+                    quantity = item.getQuantity();
+                    total += quantity*price;
+                }
+            }
+        }
+        return total;
+    }
 }
