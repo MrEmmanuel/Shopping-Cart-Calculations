@@ -32,7 +32,7 @@ public class ShoppingBasket {
 
     @Override
     public String toString() {
-        return "Shopping Basket{" +
+        return "{" +
                 "email = '" + email + '\'' +
                 ", status = '" + status + '\'' +
                 ", items = " + Arrays.toString(items) +

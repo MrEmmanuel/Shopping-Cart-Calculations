@@ -1,14 +1,13 @@
 import DataModel.BasketItems;
 import DataModel.ShoppingBasket;
+import DataModel.TotalSpend;
 import com.google.gson.Gson;
 import org.json.simple.JSONArray;
 
 import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ShoppingCart {
@@ -96,5 +95,24 @@ public class ShoppingCart {
             }
         }
         return total;
+    }
+    public List<TotalSpend> topCustomers(){
+        List<TotalSpend> topCustomers= new ArrayList<>();
+        List<String> allCustomers = getAllCustomers();
+        float totalPaid;
+        for(String customer: allCustomers){
+            totalPaid = totalSpent(customer);
+            TotalSpend customerSpend = new TotalSpend(customer, totalPaid);
+            topCustomers.add(customerSpend);
+        }
+        Collections.sort(topCustomers, new Comparator<TotalSpend>() {
+            @Override
+            public int compare(TotalSpend first, TotalSpend second) {
+                if(first.getTotal()> second.getTotal()) return -1;
+                else if(first.getTotal()== second.getTotal()) return 0;
+                return 1;
+            }
+        });
+        return topCustomers;
     }
 }

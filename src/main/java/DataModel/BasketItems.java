@@ -33,7 +33,7 @@ public class BasketItems {
 
     @Override
     public String toString() {
-        return "Basket Items{" +
+        return "{" +
                 "name =" + name + '\'' +
                 ", quantity =" + quantity + '\'' +
                 ", price=" + price +
