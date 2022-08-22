@@ -29,7 +29,7 @@ public class ShoppingCart {
         try {
             ArrayList<ShoppingBasket> allBaskets = new ArrayList<ShoppingBasket>();
             JSONParser parser = new JSONParser();
-            Object obj = parser.parse(new FileReader("/src/data.json"));
+            Object obj = parser.parse(new FileReader("src/data.json"));
             JSONArray jsonObject = (JSONArray) obj;
             for (Object json : jsonObject) {
                 ShoppingBasket response = new Gson().fromJson(json.toString(), ShoppingBasket.class);
@@ -38,8 +38,23 @@ public class ShoppingCart {
 
             return allBaskets;
         }catch(Exception e){
-            return null;
+            e.printStackTrace();
         }
+        return null;
+    }
+
+    public ArrayList<String> getAllCustomers(){
+        ArrayList<String> customersList = new ArrayList<String>();
+        for(int i=0; i< baskets.size(); i++){
+            if(!customersList.contains(baskets.get(i).getEmail())){
+                customersList.add(baskets.get(i).getEmail());
+            }
+        }
+        return customersList;
+    }
+
+    public ArrayList<String> requiredStock(){
+        return null;
     }
 
 }
