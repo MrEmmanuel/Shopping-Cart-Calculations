@@ -25,7 +25,7 @@ public class TotalSpend {
         @Override
         public String toString() {
             return "{" +
-                    "email: " + email + '\'' +
+                    "email: '" + email + '\'' +
                     ", total : " + total +
                     '}';
         }
