@@ -7,20 +7,17 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ShoppingCart {
 
     public enum Status {DELIVERED, PAID, OPEN };
-    ArrayList<ShoppingBasket> baskets = new ArrayList<ShoppingBasket>();
 
-    public ShoppingCart(){
-        this.baskets = JSONReadFromFile();
-    }
+    public List<ShoppingBasket> getCustomerBaskets(String email, ArrayList<ShoppingBasket> shoppingBaskets){
 
-    public List<ShoppingBasket> getCustomerBaskets(String email){
-        List<ShoppingBasket> customerBaskets = this.baskets.stream()
+        List<ShoppingBasket> customerBaskets = shoppingBaskets.stream()
                 .filter(basket -> basket.getEmail().equals(email))
                 .collect(Collectors.toList());
         return customerBaskets;
@@ -44,21 +41,21 @@ public class ShoppingCart {
         return null;
     }
 
-    public ArrayList<String> getAllCustomers(){
+    public ArrayList<String> getAllCustomers(ArrayList<ShoppingBasket> shoppingBaskets){
         ArrayList<String> customersList = new ArrayList<String>();
-        for(int i=0; i< baskets.size(); i++){
-            if(!customersList.contains(baskets.get(i).getEmail())){
-                customersList.add(baskets.get(i).getEmail());
+        for(int i=0; i< shoppingBaskets.size(); i++){
+            if(!customersList.contains(shoppingBaskets.get(i).getEmail())){
+                customersList.add(shoppingBaskets.get(i).getEmail());
             }
         }
         return customersList;
     }
 
-    public List<HashMap<String, Object>> requiredStock(){
+    public List<HashMap<String, Object>> requiredStock(ArrayList<ShoppingBasket> shoppingBaskets){
         int quantity = 0;
         List<HashMap<String, Object>> requiredItems = new ArrayList<>();
         HashMap<String, Integer> products = new HashMap<>();
-        for(ShoppingBasket basket: baskets){
+        for(ShoppingBasket basket: shoppingBaskets){
             if(basket.getStatus().equals(Status.PAID.toString())){
                 for(BasketItems item: basket.getItems()){
                     if(products.get(item.getName())==null){
@@ -69,7 +66,6 @@ public class ShoppingCart {
                     }
                 }
             }
-
         }
         for(String key: products.keySet()){
             HashMap<String, Object> requiredProduct = new HashMap<>();
@@ -81,8 +77,8 @@ public class ShoppingCart {
         return requiredItems;
     }
 
-    public int totalSpent(String email){
-        List<ShoppingBasket>  customerBaskets = getCustomerBaskets(email);
+    public int totalSpent(String email,ArrayList<ShoppingBasket> shoppingBaskets){
+        List<ShoppingBasket>  customerBaskets = getCustomerBaskets(email, shoppingBaskets);
         int total = 0, quantity, price;
         for(ShoppingBasket basket: customerBaskets){
             BasketItems[] items = basket.getItems();
@@ -96,12 +92,13 @@ public class ShoppingCart {
         }
         return total;
     }
-    public List<TotalSpend> topCustomers(){
+
+    public List<TotalSpend> topCustomers(ArrayList<ShoppingBasket> shoppingBaskets){
         List<TotalSpend> topCustomers= new ArrayList<>();
-        List<String> allCustomers = getAllCustomers();
+        List<String> allCustomers = getAllCustomers(shoppingBaskets);
         float totalPaid;
         for(String customer: allCustomers){
-            totalPaid = totalSpent(customer);
+            totalPaid = totalSpent(customer, shoppingBaskets);
             TotalSpend customerSpend = new TotalSpend(customer, totalPaid);
             topCustomers.add(customerSpend);
         }
@@ -116,10 +113,10 @@ public class ShoppingCart {
         return topCustomers;
     }
 
-    public ArrayList<String> getCustomersWithOpenBaskets(){
+    public ArrayList<String> getCustomersWithOpenBaskets(ArrayList<ShoppingBasket> shoppingBaskets){
         ArrayList<String> openBaskets = new ArrayList<>();
 
-        for(ShoppingBasket basket: baskets){
+        for(ShoppingBasket basket: shoppingBaskets){
             if (basket.getStatus().equals(Status.OPEN.toString()) && !openBaskets.contains(basket.getEmail())){
                 openBaskets.add(basket.getEmail());
             }
